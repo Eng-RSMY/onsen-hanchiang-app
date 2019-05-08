@@ -39,7 +39,6 @@ document.addEventListener('init', function(event) {
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
-    console.log(newContent);
   }
 });
 
@@ -59,7 +58,7 @@ function loadNewsContent(page) {
       posts.forEach(function(post) {
         allPosts.push(post);
       });
-      console.log(allPosts);
+      //console.log(allPosts);
       getThumbnail2Text(allPosts);
     });
 }
@@ -71,30 +70,28 @@ var newsDateCollection = [];
 var newsContentCollection = [];
 
 function getThumbnail2Text(allPosts) {
-  var j = 0;
-  const length = allPosts.length;
-
-  var newsContent = '';
-  allPosts.forEach(function(post) {
+  for (var j = 0; j < allPosts.length; j++) {
     $.ajax({
       url:
         'http://www.hanchiangnews.com/en/wp-json/wp/v2/media/' +
-        post.featured_media,
+        allPosts[j].featured_media,
       type: 'GET',
       success: function(res) {
-        j++;
-        newsContent += '<ons-list>';
+        console.log('...ok...' + j);
+        var newsContent = '<ons-list>';
         newsTopImageCollection[j] =
           '<img src= "' +
           res.media_details.sizes.medium_large.source_url +
           '">';
         newsTitleCollection[j] =
-          '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
-        newsDateCollection[j] = '<h4>' + extractDate(post) + '</h4>';
+          '<ons-list-header>' +
+          allPosts[j].title.rendered +
+          '</ons-list-header>';
+        newsDateCollection[j] = '<h4>' + extractDate(allPosts[j]) + '</h4>';
 
         newsContentCollection[j] =
           '<div class="news-content-rendered">' +
-          post.content.rendered +
+          allPosts[j].content.rendered +
           '</div>';
 
         newsContent += '<ons-list-item tappable';
@@ -109,23 +106,36 @@ function getThumbnail2Text(allPosts) {
         newsContent += '</div>';
         newsContent += '<div class="center">';
         newsContent +=
-          '<span class ="list-item__title">' + post.title.rendered + '</span>';
+          '<span class ="list-item__title">' +
+          allPosts[j].title.rendered +
+          '</span>';
         newsContent +=
-          '<span class ="list-item__subtitle">' + extractDate(post) + '</span>';
+          '<span class ="list-item__subtitle">' +
+          extractDate(allPosts[j]) +
+          '</span>';
         newsContent += '</div>';
 
         newsContent += '</ons-list-item>';
         newsContent += '</ons-list>';
-
+        allPosts[j] = newsContent;
+        console.log(j);
         if (j == length) {
-          $('.ui-content').html(newsContent);
-          console.log(newsContent);
+          $('.ui-content').html(getNewsContentMarkup(allPosts));
+          // console.log(newsContent);
           $('.progress-circular').css('display', 'none');
           newsListPage = newsContent;
         }
       }
     });
-  });
+  }
+}
+
+function getNewsContentMarkup(allPosts) {
+  var newsMarkup = '';
+  for (var j = 0; j < allPosts.length; j++) {
+    newsMarkup += allPosts[j];
+  }
+  return newsMarkup;
 }
 
 function extractDate(post) {
@@ -141,9 +151,15 @@ function extractDate(post) {
 var newsItem;
 //-- called from embedded markup inserted in getThumbnail2Text() --
 function getNewsContent(item) {
+  // $('.ui-content').html(
+  //   newsTopImageCollection[item] +
+  //     newsTitleCollection[item] +
+  //     newsDateCollection[item] +
+  //     newsContentCollection[item]
+  // );
   newsItem = item;
   var content = document.getElementById('myNavigator');
-
+  var menu = document.getElementById('menu');
   data = { data: { title: 'News' }, animation: 'slide' };
   content.pushPage('tempnews.html', data);
 }

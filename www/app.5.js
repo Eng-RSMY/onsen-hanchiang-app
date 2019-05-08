@@ -39,7 +39,6 @@ document.addEventListener('init', function(event) {
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
-    console.log(newContent);
   }
 });
 
@@ -116,7 +115,6 @@ function getThumbnail2Text(allPosts) {
 
         newsContent += '</ons-list-item>';
         newsContent += '</ons-list>';
-
         if (j == length) {
           $('.ui-content').html(newsContent);
           console.log(newsContent);
@@ -141,9 +139,15 @@ function extractDate(post) {
 var newsItem;
 //-- called from embedded markup inserted in getThumbnail2Text() --
 function getNewsContent(item) {
+  // $('.ui-content').html(
+  //   newsTopImageCollection[item] +
+  //     newsTitleCollection[item] +
+  //     newsDateCollection[item] +
+  //     newsContentCollection[item]
+  // );
   newsItem = item;
   var content = document.getElementById('myNavigator');
-
+  var menu = document.getElementById('menu');
   data = { data: { title: 'News' }, animation: 'slide' };
   content.pushPage('tempnews.html', data);
 }

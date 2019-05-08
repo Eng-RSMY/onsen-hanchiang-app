@@ -39,7 +39,6 @@ document.addEventListener('init', function(event) {
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
-    console.log(newContent);
   }
 });
 
@@ -74,7 +73,7 @@ function getThumbnail2Text(allPosts) {
   var j = 0;
   const length = allPosts.length;
 
-  var newsContent = '';
+  var newsContent = '<ons-list>';
   allPosts.forEach(function(post) {
     $.ajax({
       url:
@@ -83,7 +82,7 @@ function getThumbnail2Text(allPosts) {
       type: 'GET',
       success: function(res) {
         j++;
-        newsContent += '<ons-list>';
+
         newsTopImageCollection[j] =
           '<img src= "' +
           res.media_details.sizes.medium_large.source_url +
@@ -115,9 +114,9 @@ function getThumbnail2Text(allPosts) {
         newsContent += '</div>';
 
         newsContent += '</ons-list-item>';
-        newsContent += '</ons-list>';
 
         if (j == length) {
+          newsContent += '</ons-list>';
           $('.ui-content').html(newsContent);
           console.log(newsContent);
           $('.progress-circular').css('display', 'none');
@@ -141,9 +140,15 @@ function extractDate(post) {
 var newsItem;
 //-- called from embedded markup inserted in getThumbnail2Text() --
 function getNewsContent(item) {
+  // $('.ui-content').html(
+  //   newsTopImageCollection[item] +
+  //     newsTitleCollection[item] +
+  //     newsDateCollection[item] +
+  //     newsContentCollection[item]
+  // );
   newsItem = item;
   var content = document.getElementById('myNavigator');
-
+  var menu = document.getElementById('menu');
   data = { data: { title: 'News' }, animation: 'slide' };
   content.pushPage('tempnews.html', data);
 }
