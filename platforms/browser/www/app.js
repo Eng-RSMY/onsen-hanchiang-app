@@ -43,13 +43,6 @@ document.addEventListener('init', function(event) {
   }
 });
 
-document.addEventListener('show', function(event) {
-  var page = event.target;
-  if (page.id === 'tempnews.html') {
-    $('img').css('width', '100% !important'); //  todo
-  }
-});
-
 function loadNewsContent(page) {
   var newsContent = '';
   //const apiRoot = 'https://hjuapp.site/wp-json';
