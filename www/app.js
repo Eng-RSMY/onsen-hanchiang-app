@@ -33,6 +33,20 @@ document.addEventListener('init', function(event) {
   }
 });
 
+//--- catches lifecycle event _show_ for any ons-page ---
+document.addEventListener('show', function(event) {
+  var page = event.target;
+  if (page.id === 'tempnews.html') {
+    var newContent = 'new...';
+    newContent +=
+      newsTopImageCollection[newsItem] +
+      newsTitleCollection[newsItem] +
+      newsDateCollection[newsItem] +
+      newsContentCollection[newsItem];
+    $('#div-newscontent').html(newContent);
+  }
+});
+
 function loadNewsContent(page) {
   getNews();
 }
@@ -125,12 +139,18 @@ function extractDate(post) {
   return today;
 }
 
+var newsItem;
 //-- called from embedded markup inserted in getThumbnail2Text() --
 function getNewsContent(item) {
-  $('.ui-content').html(
-    newsTopImageCollection[item] +
-      newsTitleCollection[item] +
-      newsDateCollection[item] +
-      newsContentCollection[item]
-  );
+  // $('.ui-content').html(
+  //   newsTopImageCollection[item] +
+  //     newsTitleCollection[item] +
+  //     newsDateCollection[item] +
+  //     newsContentCollection[item]
+  // );
+  newsItem = item;
+  var content = document.getElementById('myNavigator');
+  var menu = document.getElementById('menu');
+  data = { data: { title: 'News' }, animation: 'slide' };
+  content.pushPage('tempnews.html', data);
 }
