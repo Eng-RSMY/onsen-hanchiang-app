@@ -40,7 +40,13 @@ document.addEventListener('init', function(event) {
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
-    $('img').css('width', '100%'); //  todo
+  }
+});
+
+document.addEventListener('show', function(event) {
+  var page = event.target;
+  if (page.id === 'tempnews.html') {
+    $('img').css('width', '100% !important'); //  todo
   }
 });
 
@@ -90,7 +96,11 @@ function getThumbnail2Text(allPosts) {
         newsTitleCollection[j] =
           '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
         newsDateCollection[j] = '<h4>' + extractDate(post) + '</h4>';
-        newsContentCollection[j] = post.content.rendered;
+        console.log('check....' + post.content.rendered);
+        newsContentCollection[j] =
+          '<div class="news-content-rendered">' +
+          post.content.rendered +
+          '</div>';
 
         newsContent += '<ons-list-item tappable';
         newsContent += ' onclick="getNewsContent(';
