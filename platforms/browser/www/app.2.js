@@ -66,7 +66,7 @@ function getThumbnail2Text(allPosts) {
   var j = 0;
   const length = allPosts.length;
 
-  var newsContent = '<ons-list>';
+  var newsContent = '<ons-card>';
   allPosts.forEach(function(post) {
     $.ajax({
       url:
@@ -80,32 +80,26 @@ function getThumbnail2Text(allPosts) {
           '<img src= "' +
           res.media_details.sizes.medium_large.source_url +
           '">';
-        newsTitleCollection[j] =
-          '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
+        newsTitleCollection[j] = '<h3>' + post.title.rendered + '</h3>';
         newsDateCollection[j] = '<h4>' + extractDate(post) + '</h4>';
         newsContentCollection[j] = post.content.rendered;
 
-        newsContent += '<ons-list-item tappable';
-        newsContent += ' onclick="getNewsContent(';
+        newsContent += '<li>';
+        newsContent += '<a href="#" onclick="getNewsContent(';
         newsContent += j;
-        newsContent += ')"';
-        newsContent += '>';
-        newsContent += '<div class="left">';
+        newsContent += ')">';
         newsContent += '<img src= "';
         newsContent += res.media_details.sizes.thumbnail.source_url;
-        newsContent += '" class="list-item__thumbnail">';
-        newsContent += '</div>';
-        newsContent += '<div class="center">';
-        newsContent +=
-          '<span class ="list-item__title">' + post.title.rendered + '</span>';
-        newsContent +=
-          '<span class ="list-item__subtitle">' + extractDate(post) + '</span>';
-        newsContent += '</div>';
-        // newsContent += '</a>';
-        newsContent += '</ons-list-item>';
+        newsContent += '" class="ui-li-thumb">';
+
+        newsContent += '<p><b>' + post.title.rendered + '</b></p>';
+        newsContent += '<p>' + extractDate(post) + '</p>';
+
+        newsContent += '</a>';
+        newsContent += '</li>';
 
         if (j == length) {
-          newsContent += '</ons-list>';
+          newsContent += '</ons-card>';
           $('.ui-content').html(newsContent);
 
           newsListPage = newsContent;

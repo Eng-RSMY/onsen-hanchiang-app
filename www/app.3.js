@@ -85,21 +85,18 @@ function getThumbnail2Text(allPosts) {
         newsDateCollection[j] = '<h4>' + extractDate(post) + '</h4>';
         newsContentCollection[j] = post.content.rendered;
 
-        newsContent += '<ons-list-item tappable';
-        newsContent += ' onclick="getNewsContent(';
-        newsContent += j;
-        newsContent += ')"';
-        newsContent += '>';
+        newsContent += '<ons-list-item tappable>';
+        //newsContent += '<a href="#" onclick="getNewsContent(';
+        //newsContent += j;
+        //newsContent += ')">';
         newsContent += '<div class="left">';
         newsContent += '<img src= "';
         newsContent += res.media_details.sizes.thumbnail.source_url;
-        newsContent += '" class="list-item__thumbnail">';
+        newsContent += '" class="list-tem__thumbnail">';
         newsContent += '</div>';
         newsContent += '<div class="center">';
-        newsContent +=
-          '<span class ="list-item__title">' + post.title.rendered + '</span>';
-        newsContent +=
-          '<span class ="list-item__subtitle">' + extractDate(post) + '</span>';
+        newsContent += '<p><b>' + post.title.rendered + '</b></p>';
+        newsContent += '<p>' + extractDate(post) + '</p>';
         newsContent += '</div>';
         // newsContent += '</a>';
         newsContent += '</ons-list-item>';
