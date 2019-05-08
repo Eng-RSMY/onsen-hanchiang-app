@@ -59,7 +59,7 @@ function loadNewsContent(page) {
       posts.forEach(function(post) {
         allPosts.push(post);
       });
-      console.log(allPosts);
+
       getThumbnail2Text(allPosts);
     });
 }
@@ -119,7 +119,7 @@ function getThumbnail2Text(allPosts) {
 
         if (j == length) {
           $('.ui-content').html(newsContent);
-          console.log(newsContent);
+
           $('.progress-circular').css('display', 'none');
           newsListPage = newsContent;
         }
