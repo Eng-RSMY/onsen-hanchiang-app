@@ -31,27 +31,20 @@ document.addEventListener('init', function(event) {
   } else {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   }
-});
 
-//--- catches lifecycle event _show_ for any ons-page ---
-document.addEventListener('show', function(event) {
-  var page = event.target;
   if (page.id === 'tempnews.html') {
-    var newContent = 'new...';
+    var newContent = '';
     newContent +=
       newsTopImageCollection[newsItem] +
       newsTitleCollection[newsItem] +
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
+    $('img').css('width', '100%'); //  todo
   }
 });
 
 function loadNewsContent(page) {
-  getNews();
-}
-
-function getNews() {
   var newsContent = '';
   //const apiRoot = 'https://hjuapp.site/wp-json';
   const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
