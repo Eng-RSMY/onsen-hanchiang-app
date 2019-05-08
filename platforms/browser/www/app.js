@@ -12,6 +12,7 @@ window.fn.load = function(page, mytitle) {
   content.pushPage(page, data).then(menu.close.bind(menu));
 };
 
+//-- called from window.fn.load() --
 document.addEventListener('init', function(event) {
   var page = event.target;
 
@@ -19,10 +20,10 @@ document.addEventListener('init', function(event) {
     page.querySelector('ons-toolbar .center').innerHTML = 'Han Chiang App';
   } else if (page.id === '1-news.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
-
-    loadNewsContent(page);
+    loadNewsContent();
   } else if (page.id === '2-timetable.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadTimetableContent();
   } else if (page.id === '3-classroom.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   } else if (page.id === '4-calendars.html') {
@@ -43,7 +44,8 @@ document.addEventListener('init', function(event) {
   }
 });
 
-function loadNewsContent(page) {
+//--------- NEWS ------------
+function loadNewsContent() {
   var newsContent = '';
   //const apiRoot = 'https://hjuapp.site/wp-json';
   const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
@@ -52,7 +54,7 @@ function loadNewsContent(page) {
 
   var wp = new WPAPI({ endpoint: apiRoot });
   wp.posts()
-    .perPage(5)
+    .perPage(30)
     .order('desc')
     .orderby('date')
     .then(function(posts) {
@@ -146,4 +148,40 @@ function getNewsContent(item) {
 
   data = { data: { title: 'News' }, animation: 'slide' };
   content.pushPage('tempnews.html', data);
+}
+
+//--------- TIMETABLE ----------------
+function loadTimetableContent() {
+  var content = '';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+
+  var wp = new WPAPI({ endpoint: apiRoot });
+
+  wp.posts()
+    .categories(8) // 7 = home 8 = timetables
+    .orderby('slug')
+    .order('asc')
+    .then(function(posts) {
+      content +=
+        '<div data-role="collapsibleset" data-inset="true" data-ajax="false">';
+      posts.forEach(function(post) {
+        content +=
+          '<div data-role="collapsible"   data-collapsed-icon="carat-d" data-expanded-icon="carat-u">';
+        content += '<h4>';
+        content += post.title.rendered;
+        content += '</h4>';
+        content += '<p>';
+        content += post.content.rendered;
+        content += '</p>';
+        content += '</div>';
+      });
+      content += '</div>';
+
+      $('.ui-content').html(content);
+
+      $('[data-role=collapsible]').collapsible();
+      $('[data-role=collapsibleset]').collapsibleset();
+      makeEmDraggable();
+      hideLoader();
+    });
 }
