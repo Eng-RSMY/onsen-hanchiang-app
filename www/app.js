@@ -52,11 +52,11 @@ document.addEventListener('init', function(event) {
 document.addEventListener('show', function(event) {
   var page = event.target;
   if (page.id === 'tempnews.html') {
-    $('a').css('display', 'inline-block');
-    $('img').css({
-      width: '100%',
-      height: 'auto'
-    });
+    // $('a').css('display', 'inline-block');
+    // $('img').css({
+    //   width: '100%',
+    //   height: 'auto'
+    // });
   }
 });
 
