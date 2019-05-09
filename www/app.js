@@ -41,6 +41,12 @@ document.addEventListener('init', function(event) {
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
     console.log(newContent);
+
+    $('a').css('display', 'inline-block');
+    $('img').css({
+      width: '100%',
+      height: 'auto'
+    });
   }
 });
 
