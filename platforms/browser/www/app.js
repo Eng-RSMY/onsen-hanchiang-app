@@ -168,6 +168,9 @@ function getNewsContent(item) {
 }
 
 //--------- TIMETABLE ----------------
+var timeTableContents = [];
+var k = 0;
+
 function loadTimetableContent() {
   var content = '';
   const apiRoot = 'https://hjuapp.site/wp-json';
@@ -179,26 +182,58 @@ function loadTimetableContent() {
     .orderby('slug')
     .order('asc')
     .then(function(posts) {
-      content +=
-        '<div data-role="collapsibleset" data-inset="true" data-ajax="false">';
+      content += '<ons-list>';
       posts.forEach(function(post) {
-        content +=
-          '<div data-role="collapsible"   data-collapsed-icon="carat-d" data-expanded-icon="carat-u">';
-        content += '<h4>';
+        k++;
+        content += '<ons-list-item modifier="chevron" tappable';
+        content += ' onclick="getTimeTableContent(';
+        content += k;
+        content += ')">';
+        content += '<ons-list-header>';
         content += post.title.rendered;
-        content += '</h4>';
-        content += '<p>';
-        content += post.content.rendered;
-        content += '</p>';
-        content += '</div>';
+        content += '</ons-list-header>';
+        content += '</ons-list-item>';
+        timeTableContents[k] = {
+          title: post.title.rendered,
+          content: post.content.rendered
+        };
       });
-      content += '</div>';
+      content += '</ons-list>';
 
       $('.ui-content').html(content);
-
-      $('[data-role=collapsible]').collapsible();
-      $('[data-role=collapsibleset]').collapsibleset();
+      $('.progress-circular').css('display', 'none');
+      console.log(timeTableContents);
       makeEmDraggable();
-      hideLoader();
     });
+}
+
+function getTimeTableContent(j) {
+  ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+}
+
+//---- zoomIn image ------
+function zoomIn() {
+  var imagesize = $('img').width();
+  imagesize = imagesize + 200;
+  $('img').width(imagesize);
+}
+
+//---- zoomOut image ------
+function zoomOut() {
+  var imagesize = $('img').width();
+  imagesize = imagesize - 200;
+  $('img').width(imagesize);
+}
+
+function fitWidth() {
+  //$('img').width($(document).width());
+  $('img').width('100%');
+  draggable.draggabilly('setPosition', 0, 0);
+}
+
+var draggable;
+function makeEmDraggable() {
+  draggable = $('img').draggabilly({
+    // options...
+  });
 }

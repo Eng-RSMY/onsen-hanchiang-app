@@ -168,9 +168,6 @@ function getNewsContent(item) {
 }
 
 //--------- TIMETABLE ----------------
-var timeTableContents = [];
-var k = 0;
-
 function loadTimetableContent() {
   var content = '';
   const apiRoot = 'https://hjuapp.site/wp-json';
@@ -184,31 +181,22 @@ function loadTimetableContent() {
     .then(function(posts) {
       content += '<ons-list>';
       posts.forEach(function(post) {
-        k++;
-        content += '<ons-list-item modifier="chevron" tappable';
-        content += ' onclick="getTimeTableContent(';
-        content += k;
-        content += ')">';
+        content += '<ons-list-item expandable tappable>';
         content += '<ons-list-header>';
         content += post.title.rendered;
         content += '</ons-list-header>';
+        content += '<div class="expandable-content">';
+        content += post.content.rendered;
+        content += '</div>';
         content += '</ons-list-item>';
-        timeTableContents[k] = {
-          title: post.title.rendered,
-          content: post.content.rendered
-        };
       });
       content += '</ons-list>';
 
       $('.ui-content').html(content);
       $('.progress-circular').css('display', 'none');
-      console.log(timeTableContents);
+
       makeEmDraggable();
     });
-}
-
-function getTimeTableContent(j) {
-  ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
 }
 
 //---- zoomIn image ------
