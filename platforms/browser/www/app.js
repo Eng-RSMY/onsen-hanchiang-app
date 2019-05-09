@@ -48,8 +48,6 @@ document.addEventListener('init', function(event) {
 
     $('#div-timetablecontent').html(newContent);
     $('#menu').removeAttr('swipeable');
-  } else {
-    $('#menu').attr('swipeable');
   }
 });
 
