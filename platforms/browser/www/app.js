@@ -41,7 +41,17 @@ document.addEventListener('init', function(event) {
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
     console.log(newContent);
+    // $('a').css('display', 'inline-block');
+    // $('img').css({
+    //   width: '100%',
+    //   height: 'auto'
+    // });
+  }
+});
 
+document.addEventListener('show', function(event) {
+  var page = event.target;
+  if (page.id === 'tempnews.html') {
     $('a').css('display', 'inline-block');
     $('img').css({
       width: '100%',
