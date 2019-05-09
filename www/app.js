@@ -108,7 +108,8 @@ function getThumbnail2Text(allPosts) {
           '">';
         newsTitleCollection[j] =
           '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
-        newsDateCollection[j] = '<h4>' + extractDate(post) + '</h4>';
+        newsDateCollection[j] =
+          '<h4 style="margin-left: 20px">' + extractDate(post) + '</h4>';
 
         newsContentCollection[j] =
           '<div class="news-content-rendered">' +
