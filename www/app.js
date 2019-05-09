@@ -40,12 +40,16 @@ document.addEventListener('init', function(event) {
       newsDateCollection[newsItem] +
       newsContentCollection[newsItem];
     $('#div-newscontent').html(newContent);
-    console.log(newContent);
-    // $('a').css('display', 'inline-block');
-    // $('img').css({
-    //   width: '100%',
-    //   height: 'auto'
-    // });
+  }
+
+  if (page.id === 'temptimetable.html') {
+    var newContent = '';
+    newContent += timeTableContents[timeTableItem].content;
+
+    $('#div-timetablecontent').html(newContent);
+    $('#menu').removeAttr('swipeable');
+  } else {
+    $('#menu').attr('swipeable');
   }
 });
 
@@ -57,6 +61,13 @@ document.addEventListener('show', function(event) {
     //   width: '100%',
     //   height: 'auto'
     // });
+  }
+});
+
+document.addEventListener('hide', function(event) {
+  var page = event.target;
+  if (page.id === 'temptimetable.html') {
+    // $('img').width('100%');
   }
 });
 
@@ -207,8 +218,17 @@ function loadTimetableContent() {
     });
 }
 
-function getTimeTableContent(j) {
-  ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+var timetableItem;
+function getTimeTableContent(t) {
+  timeTableItem = t;
+
+  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+  var objData = timeTableContents[t];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('temptimetable.html', data);
 }
 
 //---- zoomIn image ------
