@@ -66,7 +66,7 @@ document.addEventListener('init', function(event) {
     newContent += classroomContents[classroomItem].content;
 
     $('#div-classroomcontent').html(newContent);
-    $('#div-classroomcontent img').css('width', '500%');
+    $('#div-classroomcontent img').css('width', '400%');
     //zoomDefault(1200);
   }
 
