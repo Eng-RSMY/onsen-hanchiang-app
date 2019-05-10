@@ -47,25 +47,13 @@ document.addEventListener('init', function(event) {
     newContent += timeTableContents[timeTableItem].content;
 
     $('#div-timetablecontent').html(newContent);
-    $('#menu').removeAttr('swipeable');
-  }
-});
-
-document.addEventListener('show', function(event) {
-  var page = event.target;
-  if (page.id === 'tempnews.html') {
-    // $('a').css('display', 'inline-block');
-    // $('img').css({
-    //   width: '100%',
-    //   height: 'auto'
-    // });
   }
 });
 
 document.addEventListener('hide', function(event) {
   var page = event.target;
   if (page.id === 'temptimetable.html') {
-    // $('img').width('100%');
+    $('img').width('100%');
   }
 });
 
@@ -231,27 +219,27 @@ function getTimeTableContent(t) {
 
 //---- zoomIn image ------
 function zoomIn() {
-  var imagesize = $('img').width();
+  var imagesize = $('#div-timetablecontent img').width();
   imagesize = imagesize + 200;
-  $('img').width(imagesize);
+  $('#div-timetablecontent img').width(imagesize);
 }
 
 //---- zoomOut image ------
 function zoomOut() {
-  var imagesize = $('img').width();
+  var imagesize = $('#div-timetablecontent img').width();
   imagesize = imagesize - 200;
-  $('img').width(imagesize);
+  $('#div-timetablecontent img').width(imagesize);
 }
 
 function fitWidth() {
   //$('img').width($(document).width());
-  $('img').width('100%');
+  $('#div-timetablecontent img').width('100%');
   draggable.draggabilly('setPosition', 0, 0);
 }
 
 var draggable;
 function makeEmDraggable() {
-  draggable = $('img').draggabilly({
+  draggable = $('#div-timetablecontent img').draggabilly({
     // options...
   });
 }
