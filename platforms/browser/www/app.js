@@ -57,6 +57,8 @@ document.addEventListener('init', function(event) {
     newContent += timeTableContents[timeTableItem].content;
 
     $('#div-timetablecontent').html(newContent);
+    $('#div-timetablecontent img').css('width', '200%');
+    //zoomDefault(300);
   }
 
   if (page.id === 'tempclassroom.html') {
@@ -64,6 +66,8 @@ document.addEventListener('init', function(event) {
     newContent += classroomContents[classroomItem].content;
 
     $('#div-classroomcontent').html(newContent);
+    $('#div-classroomcontent img').css('width', '500%');
+    //zoomDefault(1200);
   }
 
   if (page.id === 'tempcalendar.html') {
@@ -71,6 +75,8 @@ document.addEventListener('init', function(event) {
     newContent += calendarContents[calendarItem].content;
 
     $('#div-calendarcontent').html(newContent);
+    $('#div-calendarcontent img').css('width', '200%');
+    //zoomDefault(300);
   }
 });
 
@@ -363,4 +369,11 @@ function makeEmDraggable() {
   draggable = $('.enlargeable img').draggabilly({
     // options...
   });
+}
+
+//--- default zoom -----
+function zoomDefault(zoomLevel) {
+  var imagesize = $('.enlargeable img').width();
+  imagesize = imagesize + zoomLevel;
+  $('.enlargeable img').width(imagesize);
 }
