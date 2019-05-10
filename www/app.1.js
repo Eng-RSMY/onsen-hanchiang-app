@@ -26,8 +26,13 @@ document.addEventListener('init', function(event) {
     loadTimetableContent();
   } else if (page.id === '3-classroom.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadClassrmBkContent();
   } else if (page.id === '4-calendars.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+  } else if (page.id === 'tempclassroom.html') {
+    page.querySelector(
+      'ons-toolbar .center'
+    ).innerHTML = page.data.title.substr(19);
   } else {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   }
@@ -47,6 +52,13 @@ document.addEventListener('init', function(event) {
     newContent += timeTableContents[timeTableItem].content;
 
     $('#div-timetablecontent').html(newContent);
+  }
+
+  if (page.id === 'tempclassroom.html') {
+    var newContent = '';
+    newContent += classroomContents[classroomItem].content;
+
+    $('#div-classroomcontent').html(newContent);
   }
 });
 
@@ -199,7 +211,7 @@ function loadTimetableContent() {
 
       $('.ui-content').html(content);
       $('.progress-circular').css('display', 'none');
-      console.log(timeTableContents);
+
       makeEmDraggable();
     });
 }
@@ -217,29 +229,81 @@ function getTimeTableContent(t) {
   content.pushPage('temptimetable.html', data);
 }
 
+//-------- CLASSROOM ---------
+var classroomContents = [];
+var r = 0;
+
+function loadClassrmBkContent() {
+  var content = '';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+
+  var wp = new WPAPI({ endpoint: apiRoot });
+
+  wp.posts()
+    .categories(9) // 7 = home, 8 = timetables, 9 = classroom booking
+    .orderby('slug')
+    .order('asc')
+    .then(function(posts) {
+      content += '<ons-list>';
+      posts.forEach(function(post) {
+        r++;
+        content += '<ons-list-item modifier="chevron" tappable';
+        content += ' onclick="getClassroomContent(';
+        content += r;
+        content += ')">';
+        content += '<ons-list-header>';
+        content += post.title.rendered;
+        content += '</ons-list-header>';
+        content += '</ons-list-item>';
+        classroomContents[r] = {
+          title: post.title.rendered,
+          content: post.content.rendered
+        };
+      });
+      content += '</ons-list>';
+      $('.ui-content').html(content);
+      $('.progress-circular').css('display', 'none');
+
+      makeEmDraggable();
+    });
+}
+
+var classroomItem;
+function getClassroomContent(p) {
+  classroomItem = p;
+
+  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+  var objData = classroomContents[p];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempclassroom.html', data);
+}
+
 //---- zoomIn image ------
 function zoomIn() {
-  var imagesize = $('#div-timetablecontent img').width();
+  var imagesize = $('.enlargeable img').width();
   imagesize = imagesize + 200;
-  $('#div-timetablecontent img').width(imagesize);
+  $('.enlargeable img').width(imagesize);
 }
 
 //---- zoomOut image ------
 function zoomOut() {
-  var imagesize = $('#div-timetablecontent img').width();
+  var imagesize = $('.enlargeable img').width();
   imagesize = imagesize - 200;
-  $('#div-timetablecontent img').width(imagesize);
+  $('.enlargeable img').width(imagesize);
 }
 
 function fitWidth() {
   //$('img').width($(document).width());
-  $('#div-timetablecontent img').width('100%');
+  $('.enlargeable img').width('100%');
   draggable.draggabilly('setPosition', 0, 0);
 }
 
 var draggable;
 function makeEmDraggable() {
-  draggable = $('#div-timetablecontent img').draggabilly({
+  draggable = $('.enlargeable img').draggabilly({
     // options...
   });
 }

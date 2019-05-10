@@ -29,10 +29,15 @@ document.addEventListener('init', function(event) {
     loadClassrmBkContent();
   } else if (page.id === '4-calendars.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadCalendarContent();
   } else if (page.id === 'tempclassroom.html') {
     page.querySelector(
       'ons-toolbar .center'
     ).innerHTML = page.data.title.substr(19);
+  } else if (page.id === 'tempcalendar.html') {
+    page.querySelector(
+      'ons-toolbar .center'
+    ).innerHTML = page.data.title.substr(9);
   } else {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   }
@@ -60,12 +65,12 @@ document.addEventListener('init', function(event) {
 
     $('#div-classroomcontent').html(newContent);
   }
-});
 
-document.addEventListener('hide', function(event) {
-  var page = event.target;
-  if (page.id === 'temptimetable.html') {
-    $('img').width('100%');
+  if (page.id === 'tempcalendar.html') {
+    var newContent = '';
+    newContent += calendarContents[calendarItem].content;
+
+    $('#div-calendarcontent').html(newContent);
   }
 });
 
@@ -279,6 +284,58 @@ function getClassroomContent(p) {
 
   data = { data: { title: objData.title }, animation: 'slide' };
   content.pushPage('tempclassroom.html', data);
+}
+
+//-------- CALENDAR ---------
+var calendarContents = [];
+var n = 0;
+
+function loadCalendarContent() {
+  var content = '';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+
+  var wp = new WPAPI({ endpoint: apiRoot });
+
+  wp.posts()
+    .categories(6) //6 = calendars
+    .orderby('slug')
+    .order('asc')
+    .then(function(posts) {
+      content += '<ons-list>';
+      posts.forEach(function(post) {
+        n++;
+        content += '<ons-list-item modifier="chevron" tappable';
+        content += ' onclick="getCalendarContent(';
+        content += n;
+        content += ')">';
+        content += '<ons-list-header>';
+        content += post.title.rendered;
+        content += '</ons-list-header>';
+        content += '</ons-list-item>';
+        calendarContents[n] = {
+          title: post.title.rendered,
+          content: post.content.rendered
+        };
+      });
+      content += '</ons-list>';
+      $('.ui-content').html(content);
+      $('.progress-circular').css('display', 'none');
+
+      makeEmDraggable();
+    });
+}
+
+var calendarItem;
+function getCalendarContent(n) {
+  calendarItem = n;
+
+  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+  var objData = calendarContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempcalendar.html', data);
 }
 
 //---- zoomIn image ------
