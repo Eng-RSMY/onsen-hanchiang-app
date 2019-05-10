@@ -26,6 +26,7 @@ document.addEventListener('init', function(event) {
     loadTimetableContent();
   } else if (page.id === '3-classroom.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadClassrmBkContent();
   } else if (page.id === '4-calendars.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   } else {
@@ -217,29 +218,67 @@ function getTimeTableContent(t) {
   content.pushPage('temptimetable.html', data);
 }
 
+//-------- CLASSROOM ---------
+var classroomContents = [];
+var r = 0;
+
+function loadClassrmBkContent() {
+  var content = '';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+
+  var wp = new WPAPI({ endpoint: apiRoot });
+
+  wp.posts()
+    .categories(9) // 7 = home, 8 = timetables, 9 = classroom booking
+    .orderby('slug')
+    .order('asc')
+    .then(function(posts) {
+      content +=
+        '<div data-role="collapsibleset" data-inset="true" data-ajax="false">';
+      posts.forEach(function(post) {
+        content +=
+          '<div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">';
+        content += '<h4>';
+        content += post.title.rendered;
+        content += '</h4>';
+        content += '<p>';
+        content += post.content.rendered;
+        content += '</p>';
+        content += '</div>';
+      });
+      content += '</div>';
+      $('.ui-content').html(content);
+
+      $('[data-role=collapsible]').collapsible();
+      $('[data-role=collapsibleset]').collapsibleset();
+      makeEmDraggable();
+      hideLoader();
+    });
+}
+
 //---- zoomIn image ------
 function zoomIn() {
-  var imagesize = $('#div-timetablecontent img').width();
+  var imagesize = $('.enlargeable img').width();
   imagesize = imagesize + 200;
-  $('#div-timetablecontent img').width(imagesize);
+  $('.enlargeable img').width(imagesize);
 }
 
 //---- zoomOut image ------
 function zoomOut() {
-  var imagesize = $('#div-timetablecontent img').width();
+  var imagesize = $('.enlargeable img').width();
   imagesize = imagesize - 200;
-  $('#div-timetablecontent img').width(imagesize);
+  $('.enlargeable img').width(imagesize);
 }
 
 function fitWidth() {
   //$('img').width($(document).width());
-  $('#div-timetablecontent img').width('100%');
+  $('.enlargeable img').width('100%');
   draggable.draggabilly('setPosition', 0, 0);
 }
 
 var draggable;
 function makeEmDraggable() {
-  draggable = $('#div-timetablecontent img').draggabilly({
+  draggable = $('.enlargeable img').draggabilly({
     // options...
   });
 }
