@@ -58,7 +58,7 @@ document.addEventListener('init', function(event) {
 
     $('#div-timetablecontent').html(newContent);
     $('#div-timetablecontent img').css('width', '200%');
-    //zoomDefault(300);
+   
   }
 
   if (page.id === 'tempclassroom.html') {
@@ -66,8 +66,8 @@ document.addEventListener('init', function(event) {
     newContent += classroomContents[classroomItem].content;
 
     $('#div-classroomcontent').html(newContent);
-    $('#div-classroomcontent img').css('width', '300%');
-    //zoomDefault(1200);
+    $('#div-classroomcontent img').css('width', '400%');
+   
   }
 
   if (page.id === 'tempcalendar.html') {
@@ -76,7 +76,7 @@ document.addEventListener('init', function(event) {
 
     $('#div-calendarcontent').html(newContent);
     $('#div-calendarcontent img').css('width', '200%');
-    //zoomDefault(300);
+    
   }
 });
 
