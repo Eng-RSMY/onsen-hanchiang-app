@@ -80,13 +80,14 @@ document.addEventListener('init', function(event) {
 //--------- NEWS ------------
 function loadNewsContent() {
   var newsContent = '';
-  //const apiRoot = 'https://hjuapp.site/wp-json';
-  const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+  //const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
   //var imgUrl;
   var allPosts = [];
 
   var wp = new WPAPI({ endpoint: apiRoot });
   wp.posts()
+    .categories(5) // 5 = news, 6 = calendar, 8 = timetables, 9 = classroom booking
     .perPage(30)
     .order('desc')
     .orderby('date')
@@ -112,17 +113,13 @@ function getThumbnail2Text(allPosts) {
   var newsContent = '';
   allPosts.forEach(function(post) {
     $.ajax({
-      url:
-        'http://www.hanchiangnews.com/en/wp-json/wp/v2/media/' +
-        post.featured_media,
+      url: 'https://hjuapp.site/wp-json/wp/v2/media/' + post.featured_media,
       type: 'GET',
       success: function(res) {
         j++;
         newsContent += '<ons-list>';
         newsTopImageCollection[j] =
-          '<img src= "' +
-          res.media_details.sizes.medium_large.source_url +
-          '">';
+          '<img src= "' + res.media_details.sizes.medium.source_url + '">';
         newsTitleCollection[j] =
           '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
         newsDateCollection[j] =
@@ -195,7 +192,7 @@ function loadTimetableContent() {
   var wp = new WPAPI({ endpoint: apiRoot });
 
   wp.posts()
-    .categories(8) // 7 = home 8 = timetables
+    .categories(8) // 5 = news, 6 = calendar, 8 = timetables, 9 = classroom booking
     .orderby('slug')
     .order('asc')
     .then(function(posts) {
@@ -248,7 +245,7 @@ function loadClassrmBkContent() {
   var wp = new WPAPI({ endpoint: apiRoot });
 
   wp.posts()
-    .categories(9) // 7 = home, 8 = timetables, 9 = classroom booking
+    .categories(9) // 6 = calendar, 8 = timetables, 9 = classroom booking
     .orderby('slug')
     .order('asc')
     .then(function(posts) {
