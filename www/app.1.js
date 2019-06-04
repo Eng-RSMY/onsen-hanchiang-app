@@ -29,10 +29,15 @@ document.addEventListener('init', function(event) {
     loadClassrmBkContent();
   } else if (page.id === '4-calendars.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadCalendarContent();
   } else if (page.id === 'tempclassroom.html') {
     page.querySelector(
       'ons-toolbar .center'
     ).innerHTML = page.data.title.substr(19);
+  } else if (page.id === 'tempcalendar.html') {
+    page.querySelector(
+      'ons-toolbar .center'
+    ).innerHTML = page.data.title.substr(9);
   } else {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
   }
@@ -52,6 +57,7 @@ document.addEventListener('init', function(event) {
     newContent += timeTableContents[timeTableItem].content;
 
     $('#div-timetablecontent').html(newContent);
+    $('#div-timetablecontent img').css('width', '200%');
   }
 
   if (page.id === 'tempclassroom.html') {
@@ -59,26 +65,29 @@ document.addEventListener('init', function(event) {
     newContent += classroomContents[classroomItem].content;
 
     $('#div-classroomcontent').html(newContent);
+    $('#div-classroomcontent img').css('width', '500%');
   }
-});
 
-document.addEventListener('hide', function(event) {
-  var page = event.target;
-  if (page.id === 'temptimetable.html') {
-    $('img').width('100%');
+  if (page.id === 'tempcalendar.html') {
+    var newContent = '';
+    newContent += calendarContents[calendarItem].content;
+
+    $('#div-calendarcontent').html(newContent);
+    $('#div-calendarcontent img').css('width', '200%');
   }
 });
 
 //--------- NEWS ------------
 function loadNewsContent() {
   var newsContent = '';
-  //const apiRoot = 'https://hjuapp.site/wp-json';
-  const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+  //const apiRoot = 'http://www.hanchiangnews.com/en/wp-json';
   //var imgUrl;
   var allPosts = [];
 
   var wp = new WPAPI({ endpoint: apiRoot });
   wp.posts()
+    .categories(5) // 5 = news, 6 = calendar, 8 = timetables, 9 = classroom booking
     .perPage(30)
     .order('desc')
     .orderby('date')
@@ -104,17 +113,13 @@ function getThumbnail2Text(allPosts) {
   var newsContent = '';
   allPosts.forEach(function(post) {
     $.ajax({
-      url:
-        'http://www.hanchiangnews.com/en/wp-json/wp/v2/media/' +
-        post.featured_media,
+      url: 'https://hjuapp.site/wp-json/wp/v2/media/' + post.featured_media,
       type: 'GET',
       success: function(res) {
         j++;
         newsContent += '<ons-list>';
         newsTopImageCollection[j] =
-          '<img src= "' +
-          res.media_details.sizes.medium_large.source_url +
-          '">';
+          '<img src= "' + res.media_details.sizes.medium.source_url + '">';
         newsTitleCollection[j] =
           '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
         newsDateCollection[j] =
@@ -187,7 +192,7 @@ function loadTimetableContent() {
   var wp = new WPAPI({ endpoint: apiRoot });
 
   wp.posts()
-    .categories(8) // 7 = home 8 = timetables
+    .categories(8) // 5 = news, 6 = calendar, 8 = timetables, 9 = classroom booking
     .orderby('slug')
     .order('asc')
     .then(function(posts) {
@@ -240,7 +245,7 @@ function loadClassrmBkContent() {
   var wp = new WPAPI({ endpoint: apiRoot });
 
   wp.posts()
-    .categories(9) // 7 = home, 8 = timetables, 9 = classroom booking
+    .categories(9) // 6 = calendar, 8 = timetables, 9 = classroom booking
     .orderby('slug')
     .order('asc')
     .then(function(posts) {
@@ -281,6 +286,58 @@ function getClassroomContent(p) {
   content.pushPage('tempclassroom.html', data);
 }
 
+//-------- CALENDAR ---------
+var calendarContents = [];
+var n = 0;
+
+function loadCalendarContent() {
+  var content = '';
+  const apiRoot = 'https://hjuapp.site/wp-json';
+
+  var wp = new WPAPI({ endpoint: apiRoot });
+
+  wp.posts()
+    .categories(6) //6 = calendars
+    .orderby('slug')
+    .order('asc')
+    .then(function(posts) {
+      content += '<ons-list>';
+      posts.forEach(function(post) {
+        n++;
+        content += '<ons-list-item modifier="chevron" tappable';
+        content += ' onclick="getCalendarContent(';
+        content += n;
+        content += ')">';
+        content += '<ons-list-header>';
+        content += post.title.rendered;
+        content += '</ons-list-header>';
+        content += '</ons-list-item>';
+        calendarContents[n] = {
+          title: post.title.rendered,
+          content: post.content.rendered
+        };
+      });
+      content += '</ons-list>';
+      $('.ui-content').html(content);
+      $('.progress-circular').css('display', 'none');
+
+      makeEmDraggable();
+    });
+}
+
+var calendarItem;
+function getCalendarContent(n) {
+  calendarItem = n;
+
+  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+  var objData = calendarContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempcalendar.html', data);
+}
+
 //---- zoomIn image ------
 function zoomIn() {
   var imagesize = $('.enlargeable img').width();
@@ -306,4 +363,11 @@ function makeEmDraggable() {
   draggable = $('.enlargeable img').draggabilly({
     // options...
   });
+}
+
+//--- default zoom -----
+function zoomDefault(zoomLevel) {
+  var imagesize = $('.enlargeable img').width();
+  imagesize = imagesize + zoomLevel;
+  $('.enlargeable img').width(imagesize);
 }

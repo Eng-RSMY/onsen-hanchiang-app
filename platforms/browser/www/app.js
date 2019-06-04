@@ -30,6 +30,9 @@ document.addEventListener('init', function(event) {
   } else if (page.id === '4-calendars.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
     loadCalendarContent();
+  } else if (page.id === '5-enrolled.html') {
+    page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    // loadEnrolledCoursesform();
   } else if (page.id === 'tempclassroom.html') {
     page.querySelector(
       'ons-toolbar .center'
@@ -157,7 +160,7 @@ function getThumbnail2Text(allPosts) {
           newsListPage = newsContent;
         }
       }
-    });
+    }); // --ajax end
   });
 }
 
@@ -371,3 +374,69 @@ function zoomDefault(zoomLevel) {
   imagesize = imagesize + zoomLevel;
   $('.enlargeable img').width(imagesize);
 }
+
+//-------- CHECK ENROLLED COURSES ---------
+//Todo:  create the form in enrolled.html and put a button there
+// when button click will call this function:
+function getEnrolledCourses(studentName) {
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_course_stud_name.php?app_id=hanchiangapp2019&name=' +
+      studentName,
+
+    type: 'GET',
+    success: function(res) {
+      console.log(res);
+    }
+  }); // --ajax end
+}
+
+// function getCourseContent() {
+//   var content = '';
+//   $.ajax({
+//     url: 'https://hjuapp.site/wp-json/wp/v2/media/' + post.featured_media,
+//     type: 'GET',
+//     success: function(res) {
+//       j++;
+//       newsContent += '<ons-list>';
+//       newsTopImageCollection[j] =
+//         '<img src= "' + res.media_details.sizes.medium.source_url + '">';
+//       newsTitleCollection[j] =
+//         '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
+//       newsDateCollection[j] =
+//         '<h4 style="margin-left: 20px">' + extractDate(post) + '</h4>';
+
+//       newsContentCollection[j] =
+//         '<div class="news-content-rendered">' +
+//         post.content.rendered +
+//         '</div>';
+
+//       newsContent += '<ons-list-item tappable';
+//       newsContent += ' onclick="getNewsContent(';
+//       newsContent += j;
+//       newsContent += ')"';
+//       newsContent += '>';
+//       newsContent += '<div class="left">';
+//       newsContent += '<img src= "';
+//       newsContent += res.media_details.sizes.thumbnail.source_url;
+//       newsContent += '" class="list-item__thumbnail">';
+//       newsContent += '</div>';
+//       newsContent += '<div class="center">';
+//       newsContent +=
+//         '<span class ="list-item__title">' + post.title.rendered + '</span>';
+//       newsContent +=
+//         '<span class ="list-item__subtitle">' + extractDate(post) + '</span>';
+//       newsContent += '</div>';
+
+//       newsContent += '</ons-list-item>';
+//       newsContent += '</ons-list>';
+
+//       if (j == length) {
+//         $('.ui-content').html(newsContent);
+
+//         $('.progress-circular').css('display', 'none');
+//         newsListPage = newsContent;
+//       }
+//     }
+//   }); // --ajax end
+// }
