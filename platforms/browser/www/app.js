@@ -78,6 +78,10 @@ document.addEventListener('init', function(event) {
     $('#div-calendarcontent').html(newContent);
     $('#div-calendarcontent img').css('width', '200%');
   }
+
+  if (page.id === 'tempcoursecontent.html') {
+    $('#div-coursecontent').html(courseContents);
+  }
 });
 
 //--------- NEWS ------------
@@ -378,7 +382,11 @@ function zoomDefault(zoomLevel) {
 //-------- CHECK ENROLLED COURSES ---------
 //Todo:  create the form in enrolled.html and put a button there
 // when button click will call this function:
-function getEnrolledCourses(studentName) {
+
+function getEnrolledCourses() {
+  $('.progress-circular').css('visibility', 'visible');
+  var studentName = document.getElementById('studentname').value;
+
   $.ajax({
     url:
       'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_course_stud_name.php?app_id=hanchiangapp2019&name=' +
@@ -386,57 +394,54 @@ function getEnrolledCourses(studentName) {
 
     type: 'GET',
     success: function(res) {
-      console.log(res);
+      formatCourseContents(res);
     }
-  }); // --ajax end
+  }).fail(function(xhr, status, error) {
+    // console.log('---error: ', error.message);
+    // console.log('---status: ', status);
+    // console.log('---xhr.status: ', xhr.status);
+
+    // ons.notification.toast('Error ' + xhr.status, {
+    //   timeout: 2000
+    // });
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Student not found ', {
+      timeout: 2000
+    });
+  });
 }
 
-// function getCourseContent() {
-//   var content = '';
-//   $.ajax({
-//     url: 'https://hjuapp.site/wp-json/wp/v2/media/' + post.featured_media,
-//     type: 'GET',
-//     success: function(res) {
-//       j++;
-//       newsContent += '<ons-list>';
-//       newsTopImageCollection[j] =
-//         '<img src= "' + res.media_details.sizes.medium.source_url + '">';
-//       newsTitleCollection[j] =
-//         '<ons-list-header>' + post.title.rendered + '</ons-list-header>';
-//       newsDateCollection[j] =
-//         '<h4 style="margin-left: 20px">' + extractDate(post) + '</h4>';
+var courseContents;
+function formatCourseContents(res) {
+  courseContents = '';
+  console.log(res);
+  var obj = JSON.parse(res);
+  console.log('---res.message---:', obj.message);
+  var subArray = obj.data.subject_rec.subject_details;
+  courseContents += '<p>';
+  courseContents += '<br><strong>Session:</strong></br>';
+  courseContents += '<br>' + obj.data.subject_rec.session_name + '</br>';
+  // courseContents += '<br><strong>Start Date:</strong></br>';
+  courseContents += '<br>' + obj.data.subject_rec.start_date + ' to ';
+  //courseContents += '<br><strong>End Date:</strong></br>';
+  courseContents += obj.data.subject_rec.end_date + '</br>';
+  courseContents += '<br><strong>Subject Details:</strong></br>';
+  subArray.forEach(function(subj) {
+    courseContents += '<br><em>' + subj.subject_code + '</em></br>';
+    courseContents += '<br>' + subj.subject_name + '</br>';
+  });
+  courseContents += '</p>';
+  showCourseContent();
+}
 
-//       newsContentCollection[j] =
-//         '<div class="news-content-rendered">' +
-//         post.content.rendered +
-//         '</div>';
+function showCourseContent() {
+  var content = document.getElementById('myNavigator');
 
-//       newsContent += '<ons-list-item tappable';
-//       newsContent += ' onclick="getNewsContent(';
-//       newsContent += j;
-//       newsContent += ')"';
-//       newsContent += '>';
-//       newsContent += '<div class="left">';
-//       newsContent += '<img src= "';
-//       newsContent += res.media_details.sizes.thumbnail.source_url;
-//       newsContent += '" class="list-item__thumbnail">';
-//       newsContent += '</div>';
-//       newsContent += '<div class="center">';
-//       newsContent +=
-//         '<span class ="list-item__title">' + post.title.rendered + '</span>';
-//       newsContent +=
-//         '<span class ="list-item__subtitle">' + extractDate(post) + '</span>';
-//       newsContent += '</div>';
+  data = { data: { title: 'Enrolled courses' }, animation: 'slide' };
+  content.pushPage('tempcoursecontent.html', data);
+  $('.progress-circular').css('visibility', 'hidden');
+}
 
-//       newsContent += '</ons-list-item>';
-//       newsContent += '</ons-list>';
-
-//       if (j == length) {
-//         $('.ui-content').html(newsContent);
-
-//         $('.progress-circular').css('display', 'none');
-//         newsListPage = newsContent;
-//       }
-//     }
-//   }); // --ajax end
-// }
+function clearNameInput() {
+  document.getElementById('studentname').value = '';
+}
