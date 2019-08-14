@@ -82,6 +82,10 @@ document.addEventListener('init', function(event) {
   if (page.id === 'tempcoursecontent.html') {
     $('#div-coursecontent').html(courseContents);
   }
+
+  if (page.id === 'tempregistersubjects.html') {
+    $('#div-registersubject').html(regSubContents);
+  }
 });
 
 //--------- NEWS ------------
@@ -446,9 +450,10 @@ function clearNameInput() {
   document.getElementById('studentname').value = '';
 }
 
-//-------6 Login -------
-var userID = 'nologin';
+//-------6 register subjects-------
+var userID;
 function userLogin() {
+  userID = '';
   $('.progress-circular').css('visibility', 'visible');
   var userName = document.getElementById('username').value;
   var password = document.getElementById('password').value;
@@ -461,10 +466,7 @@ function userLogin() {
 
     type: 'GET',
     success: function(res) {
-      var obj = JSON.parse(res);
-      console.log('---obj.message---:', obj.message);
-      console.log('---name---:', obj.data.name);
-      console.log('---user_id---:', obj.data.user_id);
+      getOfferedSubjects(res);
       $('.progress-circular').css('visibility', 'hidden');
     }
   }).fail(function(xhr, status, error) {
@@ -473,6 +475,77 @@ function userLogin() {
       timeout: 2000
     });
   });
+}
+
+function getOfferedSubjects(res) {
+  var obj = JSON.parse(res);
+  userID = obj.data.user_id;
+
+  $.ajax({
+    url:
+      //simulation, obj.data.user_id is ignored, connecting to xampp
+      //fake student_subject-reg.php which returns simulated json
+      //for production substitute 'localhost/hanchiang' with
+      //www.hanchianguniversitycollege.com/system/hcuc-api
+      'http://localhost/hanchiang/student_subject_reg.php?' +
+      'app_id=hanchiangapp2019&user_id=' +
+      obj.data.user_id,
+
+    type: 'GET',
+    success: function(res2) {
+      //var objRes = JSON.parse(res2);
+      //console.log(objRes.data.student_code.student_name);
+      formatOfferedSubjectContents(res2);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error getting Active subjects', {
+      timeout: 2000
+    });
+  });
+}
+
+var regSubContents;
+function formatOfferedSubjectContents(res) {
+  var obj = JSON.parse(res);
+
+  var subArray = obj.data.student_code.subject_details;
+
+  regSubContents = '';
+
+  regSubContents += '<p>';
+  regSubContents += '<br>Student ID: ' + obj.data.student_code.student_id;
+  regSubContents += '<br>Name: ' + obj.data.student_code.student_name;
+  regSubContents += '<br>Program Name: ' + obj.data.student_code.student_name;
+  regSubContents += '<br>Session: ' + obj.data.student_code.session_name;
+  regSubContents += '<br>Start Date: ' + obj.data.student_code.start_date;
+  regSubContents += '<br>End Date: ' + obj.data.student_code.end_date;
+  regSubContents += '<p><strong>Select your subjects: </strong><p>';
+  regSubContents += '<ons-list>';
+  subArray.forEach(function(subj) {
+    regSubContents += '<ons-list-item tappable>';
+    regSubContents += ' <label class="left">';
+    regSubContents += '<ons-checkbox input-id="check-1"></ons-checkbox>';
+    regSubContents += '</label>';
+    regSubContents += '<label for="check-1" class="center">';
+    regSubContents += '<em>' + subj.subject_code + '</em>';
+    regSubContents += subj.subject_name;   
+    regSubContents += ' (' + subj.unit + ' units)';   
+    regSubContents +=  '</label>'
+    regSubContents += '</ons-list-item>';
+  });
+  regSubContents += '</ons-list>';
+  regSubContents += '</p>';
+  showOfferedSubjectsContent();
+}
+
+function showOfferedSubjectsContent() {
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: 'Register subjects' }, animation: 'slide' };
+  content.pushPage('tempregistersubjects.html', data);
+  $('.progress-circular').css('visibility', 'hidden');
 }
 
 function clearLoginInput() {
