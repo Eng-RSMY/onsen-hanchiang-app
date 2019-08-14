@@ -445,3 +445,37 @@ function showCourseContent() {
 function clearNameInput() {
   document.getElementById('studentname').value = '';
 }
+
+//-------6 Login -------
+var userID = 'nologin';
+function userLogin() {
+  $('.progress-circular').css('visibility', 'visible');
+  var userName = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
+      userName +
+      '&password=' +
+      password,
+
+    type: 'GET',
+    success: function(res) {
+      var obj = JSON.parse(res);
+      console.log('---obj.message---:', obj.message);
+      console.log('---name---:', obj.data.name);
+      console.log('---user_id---:', obj.data.user_id);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error Logging in ', {
+      timeout: 2000
+    });
+  });
+}
+
+function clearLoginInput() {
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
