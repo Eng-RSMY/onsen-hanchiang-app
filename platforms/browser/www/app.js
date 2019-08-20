@@ -85,6 +85,8 @@ document.addEventListener('init', function(event) {
 
   if (page.id === 'tempregistersubjects.html') {
     $('#div-registersubject').html(regSubContents);
+    document.getElementById('totalunits').innerHTML =
+      'Total Units Selected: ' + page.data.tUnits;
   }
 });
 
@@ -487,14 +489,17 @@ function getOfferedSubjects(res) {
       //fake student_subject-reg.php which returns simulated json
       //for production substitute 'localhost/hanchiang' with
       //www.hanchianguniversitycollege.com/system/hcuc-api
-      'http://localhost/hanchiang/student_subject_reg.php?' +
+      // 'http://localhost/hanchiang/student_subject_reg.php?' +
+      // 'app_id=hanchiangapp2019&user_id=' +
+      // obj.data.user_id,
+
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_subject_reg.php?' +
       'app_id=hanchiangapp2019&user_id=' +
-      obj.data.user_id,
+      userID,
 
     type: 'GET',
     success: function(res2) {
-      //var objRes = JSON.parse(res2);
-      //console.log(objRes.data.student_code.student_name);
+      var objRes = JSON.parse(res2);
       formatOfferedSubjectContents(res2);
       $('.progress-circular').css('visibility', 'hidden');
     }
@@ -507,43 +512,61 @@ function getOfferedSubjects(res) {
 }
 
 var regSubContents;
+var subArray;
 function formatOfferedSubjectContents(res) {
   var obj = JSON.parse(res);
-
-  var subArray = obj.data.student_code.subject_details;
+  subArray = [];
+  subArray = obj.data.subject_rec.subject_details;
 
   regSubContents = '';
-
+  regSubContents = '<div class="subject-list">';
   regSubContents += '<p>';
-  regSubContents += '<br>Student ID: ' + obj.data.student_code.student_id;
-  regSubContents += '<br>Name: ' + obj.data.student_code.student_name;
-  regSubContents += '<br>Program Name: ' + obj.data.student_code.student_name;
-  regSubContents += '<br>Session: ' + obj.data.student_code.session_name;
-  regSubContents += '<br>Start Date: ' + obj.data.student_code.start_date;
-  regSubContents += '<br>End Date: ' + obj.data.student_code.end_date;
-  regSubContents += '<p><strong>Select your subjects: </strong><p>';
+  regSubContents += '<br>Student ID: ' + obj.data.subject_rec.student_id;
+  regSubContents += '<br>Name: ' + obj.data.subject_rec.student_name;
+  regSubContents += '<br>Program Name: ' + obj.data.subject_rec.student_name;
+  regSubContents += '<br>Session: ' + obj.data.subject_rec.session_name;
+  regSubContents += '<br>Start Date: ' + obj.data.subject_rec.start_date;
+  regSubContents += '<br>End Date: ' + obj.data.subject_rec.end_date;
+  regSubContents += '<p id="totalunits">';
+  regSubContents += 'Total Units Selected: ' + totalUnits;
+  regSubContents += '</p>';
+  regSubContents +=
+    '<p><strong>Select your subjects, then click Register: </strong></p>';
+
   regSubContents += '<ons-list>';
   subArray.forEach(function(subj) {
     regSubContents += '<ons-list-item tappable>';
     regSubContents += ' <label class="left">';
-    regSubContents += '<ons-checkbox input-id="check-1"></ons-checkbox>';
+    if (subj.selected === 'checked') {
+      regSubContents +=
+        '<ons-checkbox input-id="check-1" checked></ons-checkbox>';
+    } else {
+      regSubContents += '<ons-checkbox input-id="check-1"></ons-checkbox>';
+    }
+
     regSubContents += '</label>';
     regSubContents += '<label for="check-1" class="center">';
-    regSubContents += '<em>' + subj.subject_code + '</em>';
-    regSubContents += subj.subject_name;   
-    regSubContents += ' (' + subj.unit + ' units)';   
-    regSubContents +=  '</label>'
+    regSubContents += '<em>' + subj.student_code + '</em>&nbsp;';
+    regSubContents += subj.subject_name;
+    regSubContents += ' (' + subj.unit + ' units)';
+    regSubContents += '</label>';
     regSubContents += '</ons-list-item>';
   });
   regSubContents += '</ons-list>';
+  regSubContents +=
+    '<p style="text-align: center"><ons-button>Register</ons-button></p>';
   regSubContents += '</p>';
+  regSubContents += '</div>';
   showOfferedSubjectsContent();
 }
 
 function showOfferedSubjectsContent() {
   var content = document.getElementById('myNavigator');
-
-  data = { data: { title: 'Register subjects' }, animation: 'slide' };
+  calcTotalUnits();
+  data = {
+    data: { title: 'Register subjects', tUnits: totalUnits },
+    animation: 'slide'
+  };
   content.pushPage('tempregistersubjects.html', data);
   $('.progress-circular').css('visibility', 'hidden');
 }
@@ -551,4 +574,14 @@ function showOfferedSubjectsContent() {
 function clearLoginInput() {
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
+}
+
+var totalUnits = 0;
+function calcTotalUnits() {
+  totalUnits = 0;
+  subArray.forEach(function(subj) {
+    if (subj.selected === 'checked') {
+      totalUnits += Number(subj.unit);
+    }
+  });
 }
