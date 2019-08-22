@@ -473,7 +473,7 @@ function userLogin() {
     }
   }).fail(function(xhr, status, error) {
     $('.progress-circular').css('visibility', 'hidden');
-    ons.notification.toast('Error Logging in ', {
+    ons.notification.toast('Error Login: ' + error, {
       timeout: 2000
     });
   });
@@ -603,6 +603,7 @@ function showOfferedSubjectsContent() {
 }
 
 function clearLoginInput() {
+  userID = '';
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
@@ -653,13 +654,13 @@ function registerSubjects() {
     '&subject_offering_id=' +
     soid;
 
-  //console.log('...regUrl: ' + regUrl);
+  console.log('...regUrl: ' + regUrl);
   $.ajax({
     url: regUrl,
     type: 'GET',
     success: function(res) {
       var obj = JSON.parse(res);
-      console.log('..obj.message: ' + obj.message);
+      //console.log('..obj.message: ' + obj.message);
       ons.notification.toast('Successfully registered subjects', {
         timeout: 2000
       });
