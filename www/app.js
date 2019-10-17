@@ -511,59 +511,87 @@ function getOfferedSubjects(res) {
   });
 }
 
+function getOfferedSubjectsDebug(res) {
+  var obj = JSON.parse(res);
+  userID = obj.data.user_id;
+
+  $.ajax({
+    url:
+      //simulation, obj.data.user_id is ignored, connecting to xampp
+      //fake student_subject-reg.php which returns simulated json
+      //for production substitute 'localhost/hanchiang' with
+      //www.hanchianguniversitycollege.com/system/hcuc-api
+      // 'http://localhost/hanchiang/student_subject_reg.php?' +
+      // 'app_id=hanchiangapp2019&user_id=' +
+      // obj.data.user_id,
+
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_subject_reg.php?' +
+      'app_id=hanchiangapp2019&user_id=' +
+      userID,
+
+    type: 'GET',
+    success: function(res2) {
+      var objRes = JSON.parse(res2);
+      console.log(res2);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error getting offerred subjects', {
+      timeout: 2000
+    });
+  });
+}
+
 var regSubContents;
 var subOfferArray;
+var subOfferArray_test;
 var stuOfferObj = {}; //stores student details + subjects offerred
 function formatOfferedSubjectContents(res) {
   stuOfferObj = {};
   stuOfferObj = JSON.parse(res);
+
   subOfferArray = [];
-  subOfferArray = stuOfferObj.data.subject_rec.subject_details;
+  subOfferArray = stuOfferObj.data[0].subject_rec;
+  subOfferArray_test = stuOfferObj.data[0].subject_rec.subject_details;
+
+  console.log(subOfferArray_test);
 
   regSubContents = '';
   regSubContents = '<div class="subject-list">';
   regSubContents += '<p>';
   regSubContents += '<br>User ID: <em>' + userID + '</em>';
   regSubContents +=
-    '<br>Student ID: <strong>' +
-    stuOfferObj.data.subject_rec.student_id +
-    '</strong>';
+    '<br>Student ID: <strong>' + subOfferArray.student_id + '</strong>';
   regSubContents +=
-    '<br>Name: <strong>' +
-    stuOfferObj.data.subject_rec.student_name +
-    '</strong>';
+    '<br>Name: <strong>' + subOfferArray.student_name + '</strong>';
   regSubContents +=
-    '<br>Program Name: <strong>' +
-    stuOfferObj.data.subject_rec.student_name +
-    '</strong>';
+    '<br>Program Name: <strong>' + subOfferArray.programme_name + '</strong>';
   regSubContents +=
-    '<br>Session: <strong>' +
-    stuOfferObj.data.subject_rec.session_name +
-    '</strong>';
+    '<br>Session: <strong>' + subOfferArray.session_name + '</strong>';
   regSubContents +=
-    '<br>Start Date: <strong>' +
-    stuOfferObj.data.subject_rec.start_date +
-    '</strong>';
+    '<br>Start Date: <strong>' + subOfferArray.start_date + '</strong>';
   regSubContents +=
-    '<br>End Date: <strong>' +
-    stuOfferObj.data.subject_rec.end_date +
-    '</strong>';
+    '<br>End Date: <strong>' + subOfferArray.end_date + '</strong>';
   regSubContents +=
-    '<br>Session ID: <strong>' +
-    stuOfferObj.data.subject_rec.session_id +
-    '</strong>';
+    '<br>Session ID: <strong>' + subOfferArray.session_id + '</strong>';
   regSubContents += '<p id="totalunits">';
   regSubContents += 'Total Units Selected: <strong>' + totalUnits + '</strong>';
   regSubContents += '</p>';
-  regSubContents +=
-    '<p><strong>Select your subjects, then click Register: </strong></p>';
 
+  if (subOfferArray_test.length != 0) {
+    regSubContents +=
+      '<p><strong>Select your subjects, then click Register: </strong></p>';
+  } else {
+    regSubContents +=
+      '<p><strong>Currently No Subjecs to Register </strong></p>';
+  }
   regSubContents += '<ons-list>';
-  for (var i = 0; i < subOfferArray.length; i++) {
+  for (var i = 0; i < subOfferArray_test.length; i++) {
     var strIndex = i.toString();
     regSubContents += '<ons-list-item tappable>';
     regSubContents += ' <label class="left">';
-    if (subOfferArray[i].selected === 'checked') {
+    if (subOfferArray_test[i].selected === 'checked') {
       regSubContents +=
         '<ons-checkbox onclick="recalcTotalUnits(this)" checked';
       regSubContents += ' id="' + strIndex + '"';
@@ -576,16 +604,20 @@ function formatOfferedSubjectContents(res) {
 
     regSubContents += '</label>';
     regSubContents += '<label class="center">';
-    regSubContents += '<em>' + subOfferArray[i].student_code + '</em>&nbsp;';
-    regSubContents += subOfferArray[i].subject_name;
-    regSubContents += ' (' + subOfferArray[i].unit + ' units)';
+    regSubContents +=
+      '<em>' + subOfferArray_test[i].student_code + '</em>&nbsp;';
+    regSubContents += subOfferArray_test[i].subject_name;
+    regSubContents += ' (' + subOfferArray_test[i].unit + ' units)';
     regSubContents += '</label>';
     regSubContents += '</ons-list-item>';
   }
 
   regSubContents += '</ons-list>';
-  regSubContents +=
-    '<p style="text-align: center" onclick="registerSubjects()"><ons-button>Register</ons-button></p>';
+  if (subOfferArray_test.length != 0) {
+    regSubContents +=
+      '<p style="text-align: center" onclick="registerSubjects()"><ons-button>Register</ons-button></p>';
+  }
+
   regSubContents += '</p>';
   regSubContents += '</div>';
   showOfferedSubjectsContent();
@@ -611,7 +643,7 @@ function clearLoginInput() {
 var totalUnits = 0;
 function calcTotalUnits() {
   totalUnits = 0;
-  subOfferArray.forEach(function(subj) {
+  subOfferArray_test.forEach(function(subj) {
     if (subj.selected === 'checked') {
       totalUnits += Number(subj.unit);
     }
@@ -622,9 +654,9 @@ function recalcTotalUnits(cb) {
   totalUnits = 0;
   var cbid = Number(cb.id);
   if (cb.checked === true) {
-    subOfferArray[cbid].selected = 'checked';
+    subOfferArray_test[cbid].selected = 'checked';
   } else if (cb.checked === false) {
-    subOfferArray[cbid].selected = '';
+    subOfferArray_test[cbid].selected = '';
   }
   calcTotalUnits();
   document.getElementById('totalunits').innerHTML =
@@ -634,21 +666,27 @@ function recalcTotalUnits(cb) {
 function registerSubjects() {
   var soid = ''; //subject offering id = '7236,7312,7315,7321,7427';
 
-  for (var j = 0; j < subOfferArray.length; j++) {
-    if (subOfferArray[j].selected === 'checked') {
-      soid += subOfferArray[j].subject_offering_id;
-      if (j < subOfferArray.length - 1) {
+  for (var j = 0; j < subOfferArray_test.length; j++) {
+    if (subOfferArray_test[j].selected === 'checked') {
+      soid += subOfferArray_test[j].subject_offering_id;
+      if (j < subOfferArray_test.length - 1) {
         soid += ',';
       }
     }
   }
 
+  soid = soid.replace(/,\s*$/, '');
+  console.log(soid);
+
+  //subOfferArray = [];
+  //subOfferArray = stuOfferObj.data[0].subject_rec;
+
   var regUrl =
     'http://www.hanchianguniversitycollege.com/system/hcuc-api/update_stud_subject_reg.php?app_id=hanchiangapp2019' +
     '&user_id=' +
-    stuOfferObj.data.subject_rec.student_id +
+    userID +
     '&session_no=' +
-    stuOfferObj.data.subject_rec.session_id +
+    subOfferArray.session_id +
     '&unit=' +
     totalUnits +
     '&subject_offering_id=' +
