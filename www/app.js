@@ -33,6 +33,9 @@ document.addEventListener('init', function(event) {
   } else if (page.id === '5-enrolled.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
     // loadEnrolledCoursesform();
+  } else if (page.id === '7-schoolposts.html') {
+    page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    loadSchoolPostsContent();
   } else if (page.id === 'tempclassroom.html') {
     page.querySelector(
       'ons-toolbar .center'
@@ -710,4 +713,13 @@ function registerSubjects() {
       timeout: 2000
     });
   });
+}
+
+//-------7 School Posts -------
+function loadSchoolPostsContent() {
+  var schoolContent = 'it works again';
+  $('.ui-content').html(schoolContent);
+  $('.progress-circular').css('display', 'none');
+
+  makeEmDraggable();
 }
