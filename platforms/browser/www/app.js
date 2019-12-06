@@ -33,9 +33,6 @@ document.addEventListener('init', function(event) {
   } else if (page.id === '5-enrolled.html') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
     // loadEnrolledCoursesform();
-  } else if (page.id === '7-schoolposts.html') {
-    page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
-    loadSchoolPostsContent();
   } else if (page.id === 'tempclassroom.html') {
     page.querySelector(
       'ons-toolbar .center'
@@ -90,6 +87,9 @@ document.addEventListener('init', function(event) {
     $('#div-registersubject').html(regSubContents);
     document.getElementById('totalunits').innerHTML =
       'Total Units Selected: ' + page.data.tUnits;
+  }
+  if (page.id === 'tempschoolposts.html') {
+    $('#div-schoolposts').html(schoolPostContents);
   }
 });
 
@@ -388,9 +388,7 @@ function zoomDefault(zoomLevel) {
   $('.enlargeable img').width(imagesize);
 }
 
-//-------- CHECK ENROLLED COURSES ---------
-//Todo:  create the form in enrolled.html and put a button there
-// when button click will call this function:
+//-------- CHECK ENROLLED COURSES --------
 
 function getEnrolledCourses() {
   $('.progress-circular').css('visibility', 'visible');
@@ -558,7 +556,7 @@ function formatOfferedSubjectContents(res) {
   subOfferArray = stuOfferObj.data[0].subject_rec;
   subOfferArray_test = stuOfferObj.data[0].subject_rec.subject_details;
 
-  console.log(subOfferArray_test);
+  //console.log(subOfferArray_test);
 
   regSubContents = '';
   regSubContents = '<div class="subject-list">';
@@ -716,10 +714,71 @@ function registerSubjects() {
 }
 
 //-------7 School Posts -------
-function loadSchoolPostsContent() {
-  var schoolContent = 'it works again';
-  $('.ui-content').html(schoolContent);
-  $('.progress-circular').css('display', 'none');
+function userLoginSchoolPosts() {
+  schoolUserID = '';
+  $('.progress-circular').css('visibility', 'visible');
+  var userName = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
+      userName +
+      '&password=' +
+      password,
 
-  makeEmDraggable();
+    type: 'GET',
+    success: function(res) {
+      var obj = JSON.parse(res);
+      schoolUserID = obj.data.user_id;
+      loadSchoolPostsContent(schoolUserID);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error Login: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+function loadSchoolPostsContent(schoolUserID) {
+  var regUrl =
+    'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_admin_post.php?app_id=hanchiangapp2019&user_id=' +
+    schoolUserID;
+
+  $.ajax({
+    url: regUrl,
+    type: 'GET',
+    success: function(res) {
+      formatSchoolPostsContent(res);
+      var content = document.getElementById('myNavigator');
+      data = {
+        data: { title: 'School Posts' },
+        animation: 'slide'
+      };
+      content.pushPage('tempschoolposts.html', data);
+      $('.progress-circular').css('display', 'none');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+var schoolPostContents = '';
+function formatSchoolPostsContent(res) {
+  var obj = JSON.parse(res);
+  //console.log(obj.data[0].post_rec.category_name);
+  schoolPostContents += '<div class="school-posts">';
+  for (var r = 0; r < obj.data.length; r++) {
+    schoolPostContents +=
+      '<br><b>' + obj.data[r].post_rec.category_name + '</b>' + '<br><br>';
+    for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
+      schoolPostContents +=
+        obj.data[r].post_rec.post_details[s].post_description + '<br>';
+    }
+  }
+  schoolPostContents += '</div>';
 }
