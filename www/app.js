@@ -771,6 +771,9 @@ var schoolPostContents = '';
 function formatSchoolPostsContent(res) {
   var obj = JSON.parse(res);
   //console.log(obj.data[0].post_rec.category_name);
+  var pic =
+    'https://images.all-free-download.com/images/graphiclarge/an_apple_clip_art_12887.jpg';
+
   schoolPostContents += '<div class="school-posts">';
   for (var r = 0; r < obj.data.length; r++) {
     schoolPostContents +=
@@ -778,6 +781,11 @@ function formatSchoolPostsContent(res) {
     for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
       schoolPostContents +=
         obj.data[r].post_rec.post_details[s].post_description + '<br>';
+      schoolPostContents +=
+        '<a href="' +
+        obj.data[r].post_rec.post_details[s].post_url +
+        '">Visit W3Schools.com!' +
+        '</a><br>';
     }
   }
   schoolPostContents += '</div>';
