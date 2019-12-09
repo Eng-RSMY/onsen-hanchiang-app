@@ -776,21 +776,22 @@ var schoolPostContents = '';
 function formatSchoolPostsContent(res) {
   var obj = JSON.parse(res);
   //console.log(obj.data[0].post_rec.category_name);
-  var pic =
-    'https://images.all-free-download.com/images/graphiclarge/an_apple_clip_art_12887.jpg';
 
   schoolPostContents += '<div class="school-posts">';
   for (var r = 0; r < obj.data.length; r++) {
     schoolPostContents +=
       '<br><b>' + obj.data[r].post_rec.category_name + '</b>' + '<br><br>';
     for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
+      n++;
+      schoolPostContents += '<ons-list-item modifier="chevron" tappable';
+      schoolPostContents += ' onclick="getCalendarContent(';
+      schoolPostContents += n;
+      schoolPostContents += ')">';
+      schoolPostContents += '<ons-list-header>';
       schoolPostContents +=
-        obj.data[r].post_rec.post_details[s].post_description + '<br>';
-      schoolPostContents +=
-        '<a href="' +
-        obj.data[r].post_rec.post_details[s].post_url +
-        '" target="_blank">Visit W3Schools.com' +
-        '</a><br>';
+        obj.data[r].post_rec.post_details[s].post_description;
+      schoolPostContents += '</ons-list-header>';
+      schoolPostContents += '</ons-list-item>';
     }
   }
   schoolPostContents += '</div>';
