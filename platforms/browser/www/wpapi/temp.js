@@ -28,3 +28,15 @@ function showCourseContent() {
   content.pushPage('tempcoursecontent.html', data);
   $('.progress-circular').css('visibility', 'hidden');
 }
+
+
+function showOfferedSubjectsContent() {
+  var content = document.getElementById('myNavigator');
+  calcTotalUnits();
+  data = {
+    data: { title: 'Register subjects', tUnits: totalUnits },
+    animation: 'slide'
+  };
+  content.pushPage('tempregistersubjects.html', data);
+  $('.progress-circular').css('visibility', 'hidden');
+}

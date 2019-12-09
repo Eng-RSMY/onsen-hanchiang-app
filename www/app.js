@@ -719,6 +719,11 @@ function userLoginSchoolPosts() {
   $('.progress-circular').css('visibility', 'visible');
   var userName = document.getElementById('username').value;
   var password = document.getElementById('password').value;
+
+  //--debug--
+  userName = 'h1811416006@hcu.edu.my';
+  password = '980121075452';
+
   $.ajax({
     url:
       'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
@@ -784,7 +789,7 @@ function formatSchoolPostsContent(res) {
       schoolPostContents +=
         '<a href="' +
         obj.data[r].post_rec.post_details[s].post_url +
-        '">Visit W3Schools.com!' +
+        '" target="_self">Visit W3Schools.com' +
         '</a><br>';
     }
   }
