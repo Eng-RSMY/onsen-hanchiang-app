@@ -79,6 +79,14 @@ document.addEventListener('init', function(event) {
     $('#div-calendarcontent img').css('width', '200%');
   }
 
+  if (page.id === 'tempschool.html') {
+    var newContent = '';
+    newContent += schoolContents[schoolItem].content;
+
+    $('#div-schoolcontent').html(newContent);
+    //$('#div-calendarcontent img').css('width', '200%');
+  }
+
   if (page.id === 'tempcoursecontent.html') {
     $('#div-coursecontent').html(courseContents);
   }
@@ -772,8 +780,10 @@ function loadSchoolPostsContent(schoolUserID) {
   });
 }
 
+var schoolContents = [];
 var schoolPostContents = '';
 function formatSchoolPostsContent(res) {
+  n = 0;
   var obj = JSON.parse(res);
   //console.log(obj.data[0].post_rec.category_name);
 
@@ -784,7 +794,7 @@ function formatSchoolPostsContent(res) {
     for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
       n++;
       schoolPostContents += '<ons-list-item modifier="chevron" tappable';
-      schoolPostContents += ' onclick="getCalendarContent(';
+      schoolPostContents += ' onclick="getSchoolContent(';
       schoolPostContents += n;
       schoolPostContents += ')">';
       schoolPostContents += '<ons-list-header>';
@@ -792,7 +802,32 @@ function formatSchoolPostsContent(res) {
         obj.data[r].post_rec.post_details[s].post_description;
       schoolPostContents += '</ons-list-header>';
       schoolPostContents += '</ons-list-item>';
+      schoolContents[n] = {
+        title: obj.data[r].post_rec.post_details[s].post_description,
+        content: obj.data[r].post_rec.post_details[s].post_url
+      };
     }
   }
   schoolPostContents += '</div>';
+}
+
+var schoolItem;
+var currentUrl = '';
+function getSchoolContent(n) {
+  schoolItem = n;
+  curentUrl = schoolContents[1].content;
+  console.log('...' + currentUrl);
+  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+  var objData = schoolContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempschool.html', data);
+}
+
+function loadPdf() {
+  //console.log('...' + currentUrl);
+  //var url = '';
+  //var loadingTask = pdfjsLib.getDocument(currentUrl);
 }
