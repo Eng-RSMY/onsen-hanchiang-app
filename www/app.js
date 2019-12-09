@@ -789,7 +789,7 @@ function formatSchoolPostsContent(res) {
       schoolPostContents +=
         '<a href="' +
         obj.data[r].post_rec.post_details[s].post_url +
-        '" target="_self">Visit W3Schools.com' +
+        '" target="_blank">Visit W3Schools.com' +
         '</a><br>';
     }
   }
