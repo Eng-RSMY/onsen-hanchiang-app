@@ -758,7 +758,7 @@ function loadSchoolPostsContent(schoolUserID) {
   var regUrl =
     'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_admin_post.php?app_id=hanchiangapp2019&user_id=' +
     schoolUserID;
-
+  //kung sin yee: userID 918
   $.ajax({
     url: regUrl,
     type: 'GET',
@@ -815,8 +815,8 @@ var schoolItem;
 var currentUrl = '';
 function getSchoolContent(n) {
   schoolItem = n;
-  curentUrl = schoolContents[1].content;
-  console.log('...' + currentUrl);
+  currentUrl = schoolContents[1].content;
+  //console.log('...' + currentUrl);
   //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
   var objData = schoolContents[n];
 
@@ -827,7 +827,20 @@ function getSchoolContent(n) {
 }
 
 function loadPdf() {
-  //console.log('...' + currentUrl);
-  //var url = '';
-  //var loadingTask = pdfjsLib.getDocument(currentUrl);
+  var url = '';
+  var loadingTask = pdfjsLib.getDocument(currentUrl);
+  loadingTask.promise
+    .then(function(pdf) {
+      // you can now use *pdf* here
+      ons.notification.toast('Pdf Loaded!', {
+        timeout: 3000,
+        animation: 'lift'
+      });
+    })
+    .catch(function(err) {
+      ons.notification.toast('Pdf fails!', {
+        timeout: 3000,
+        animation: 'lift'
+      });
+    });
 }
