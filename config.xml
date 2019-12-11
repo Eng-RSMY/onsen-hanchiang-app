@@ -21,7 +21,7 @@
     <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
     <plugin name="cordova-plugin-console" spec="~1.0.1" />
     <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
-    <plugin name="ch.ti8m.phonegap.plugins.DocumentHandler" source="git" />
+    <plugin spec="https://github.com/ti8m/DocumentHandler.git" source="git" />
 
     <preference name="orientation" value="portrait" />
 
