@@ -837,6 +837,6 @@ function loadPdf() {
       console.log('failure');
       ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
     },
-    'http://www.example.com/path/to/document.pdf'
+    currentUrl
   );
 }
