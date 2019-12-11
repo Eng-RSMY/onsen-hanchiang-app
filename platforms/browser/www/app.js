@@ -828,19 +828,17 @@ function getSchoolContent(n) {
 
 function loadPdf() {
   var url = '';
-  var loadingTask = pdfjsLib.getDocument(currentUrl);
-  loadingTask.promise
-    .then(function(pdf) {
-      // you can now use *pdf* here
-      ons.notification.toast('Pdf Loaded!', {
-        timeout: 3000,
-        animation: 'lift'
-      });
-    })
-    .catch(function(err) {
-      ons.notification.toast('Pdf fails!', {
-        timeout: 3000,
-        animation: 'lift'
-      });
-    });
+  console.log('..loadPdf...');
+  handleDocumentWithURL(
+    function() {
+      console.log('success');
+    },
+    function(error) {
+      console.log('failure');
+      if (error == 53) {
+        console.log('No app that handles this file type.');
+      }
+    },
+    'http://www.example.com/path/to/document.pdf'
+  );
 }
