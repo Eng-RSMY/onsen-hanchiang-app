@@ -828,15 +828,15 @@ function getSchoolContent(n) {
 
 function loadPdf() {
   var url = '';
-  console.log(currentUrl);
-  // handleDocumentWithURL(
-  //   function() {
-  //     ons.notification.toast('pdf load ok', { timeout: 2000 });
-  //   },
-  //   function(error) {
-  //     console.log('failure');
-  //     ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
-  //   },
-  //   currentUrl
-  // );
+  // console.log(currentUrl);
+  handleDocumentWithURL(
+    function() {
+      ons.notification.toast('pdf load ok', { timeout: 2000 });
+    },
+    function(error) {
+      console.log('failure');
+      ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
+    },
+    currentUrl
+  );
 }
