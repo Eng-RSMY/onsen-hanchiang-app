@@ -815,7 +815,7 @@ var schoolItem;
 var currentUrl = '';
 function getSchoolContent(n) {
   schoolItem = n;
-  currentUrl = schoolContents[1].content;
+  currentUrl = schoolContents[n].content;
   //console.log('...' + currentUrl);
   //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
   var objData = schoolContents[n];
@@ -828,15 +828,15 @@ function getSchoolContent(n) {
 
 function loadPdf() {
   var url = '';
-
-  handleDocumentWithURL(
-    function() {
-      ons.notification.toast('pdf load ok', { timeout: 2000 });
-    },
-    function(error) {
-      console.log('failure');
-      ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
-    },
-    currentUrl
-  );
+  console.log(currentUrl);
+  // handleDocumentWithURL(
+  //   function() {
+  //     ons.notification.toast('pdf load ok', { timeout: 2000 });
+  //   },
+  //   function(error) {
+  //     console.log('failure');
+  //     ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
+  //   },
+  //   currentUrl
+  // );
 }
