@@ -828,16 +828,14 @@ function getSchoolContent(n) {
 
 function loadPdf() {
   var url = '';
-  console.log('..loadPdf...');
+
   handleDocumentWithURL(
     function() {
-      console.log('success');
+      ons.notification.toast('pdf load ok', { timeout: 2000 });
     },
     function(error) {
       console.log('failure');
-      if (error == 53) {
-        console.log('No app that handles this file type.');
-      }
+      ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
     },
     'http://www.example.com/path/to/document.pdf'
   );
