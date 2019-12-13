@@ -100,9 +100,20 @@ document.addEventListener('init', function(event) {
     $('#div-schoolposts').html(schoolPostContents);
   }
   if (page.id === 'tempregistryposts.html') {
-    $('#div-schoolposts').html(registryPostContents);
+    $('#div-registryposts').html(registryPostContents);
   }
-  if (page.id === '7-schoolposts.html' || page.id === '8-registryposts.html') {
+  if (page.id === 'tempserviceposts.html') {
+    $('#div-serviceposts').html(servicePostContents);
+  }
+  if (page.id === 'tempfinanceposts.html') {
+    $('#div-financeposts').html(financePostContents);
+  }
+  if (
+    page.id === '7-schoolposts.html' ||
+    page.id === '8-registryposts.html' ||
+    page.id === '9-serviceposts.html' ||
+    page.id === '10-financeposts.html'
+  ) {
     document.getElementById('username').value = userName;
     document.getElementById('password').value = password;
   }
@@ -728,8 +739,8 @@ function registerSubjects() {
   });
 }
 
-var userName = 'h1811416006@hcu.edu.my';
-var password = '980121075452';
+var userName = '';
+var password = '';
 //-------7 School Posts -------
 function userLoginSchoolPosts() {
   schoolUserID = '';
@@ -912,7 +923,6 @@ var registryPostContents = '';
 function formatRegistryPostsContent(res) {
   n = 0;
   var obj = JSON.parse(res);
-  //console.log(obj.data[0].post_rec.category_name);
 
   registryPostContents += '<div class="registry-posts">';
   for (var r = 0; r < obj.data.length; r++) {
@@ -950,16 +960,210 @@ function getRegistryContent(n) {
   content.pushPage('tempregistry.html', data);
 }
 
-function loadPdf() {
-  var url = '';
-  handleDocumentWithURL(
-    function() {
-      ons.notification.toast('pdf load ok', { timeout: 2000 });
-    },
-    function(error) {
-      console.log('failure');
-      ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
-    },
-    currentUrl
-  );
+//-------9 Service Post -------
+function userLoginServicePosts() {
+  schoolUserID = '';
+  $('.progress-circular').css('visibility', 'visible');
+  userName = document.getElementById('username').value;
+  password = document.getElementById('password').value;
+
+  //--debug--
+  //userName = 'h1811416006@hcu.edu.my';
+  //password = '980121075452';
+
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
+      userName +
+      '&password=' +
+      password,
+
+    type: 'GET',
+    success: function(res) {
+      var obj = JSON.parse(res);
+      schoolUserID = obj.data.user_id;
+      loadServicePostsContent(schoolUserID);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error Login: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+function loadServicePostsContent(schoolUserID) {
+  var regUrl =
+    'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_service_post.php?app_id=hanchiangapp2019&user_id=' +
+    schoolUserID;
+  //kung sin yee: userID 918
+  $.ajax({
+    url: regUrl,
+    type: 'GET',
+    success: function(res) {
+      formatServicePostsContent(res);
+      var content = document.getElementById('myNavigator');
+      data = {
+        data: { title: 'Student Service Posts' },
+        animation: 'slide'
+      };
+      content.pushPage('tempserviceposts.html', data);
+      $('.progress-circular').css('display', 'none');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+var serviceContents = [];
+var servicePostContents = '';
+function formatServicePostsContent(res) {
+  n = 0;
+  var obj = JSON.parse(res);
+  //console.log(obj.data[0].post_rec.category_name);
+
+  servicePostContents += '<div class="service-posts">';
+  for (var r = 0; r < obj.data.length; r++) {
+    servicePostContents +=
+      '<br><b>' + obj.data[r].post_rec.category_name + '</b>' + '<br><br>';
+    for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
+      n++;
+      servicePostContents += '<ons-list-item modifier="chevron" tappable';
+      servicePostContents += ' onclick="getServiceContent(';
+      servicePostContents += n;
+      servicePostContents += ')">';
+      servicePostContents += '<ons-list-header>';
+      servicePostContents +=
+        obj.data[r].post_rec.post_details[s].post_description;
+      servicePostContents += '</ons-list-header>';
+      schoolPostContents += '</ons-list-item>';
+      serviceContents[n] = {
+        title: obj.data[r].post_rec.post_details[s].post_description,
+        content: obj.data[r].post_rec.post_details[s].post_url
+      };
+    }
+  }
+  servicePostContents += '</div>';
+}
+
+var schoolItem;
+var currentUrl = '';
+function getServiceContent(n) {
+  schoolItem = n;
+  currentUrl = serviceContents[n].content;
+
+  var objData = serviceContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempservice.html', data);
+}
+
+//-------10 Finance Post -------
+function userLoginFinancePosts() {
+  schoolUserID = '';
+  $('.progress-circular').css('visibility', 'visible');
+  userName = document.getElementById('username').value;
+  password = document.getElementById('password').value;
+
+  //--debug--
+  //userName = 'h1811416006@hcu.edu.my';
+  //password = '980121075452';
+
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
+      userName +
+      '&password=' +
+      password,
+
+    type: 'GET',
+    success: function(res) {
+      var obj = JSON.parse(res);
+      schoolUserID = obj.data.user_id;
+      loadFinancePostsContent(schoolUserID);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error Login: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+function loadFinancePostsContent(schoolUserID) {
+  var regUrl =
+    'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_finance_post.php?app_id=hanchiangapp2019&user_id=' +
+    schoolUserID;
+  //kung sin yee: userID 918
+  $.ajax({
+    url: regUrl,
+    type: 'GET',
+    success: function(res) {
+      formatFinancePostsContent(res);
+      var content = document.getElementById('myNavigator');
+      data = {
+        data: { title: 'Finance Posts' },
+        animation: 'slide'
+      };
+      content.pushPage('tempfinanceposts.html', data);
+      $('.progress-circular').css('display', 'none');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+var financeContents = [];
+var financePostContents = '';
+function formatFinancePostsContent(res) {
+  n = 0;
+  var obj = JSON.parse(res);
+  //console.log(obj.data[0].post_rec.category_name);
+
+  financePostContents += '<div class="finance-posts">';
+  for (var r = 0; r < obj.data.length; r++) {
+    financePostContents +=
+      '<br><b>' + obj.data[r].post_rec.category_name + '</b>' + '<br><br>';
+    for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
+      n++;
+      financePostContents += '<ons-list-item modifier="chevron" tappable';
+      financePostContents += ' onclick="getFinanceContent(';
+      financePostContents += n;
+      financePostContents += ')">';
+      financePostContents += '<ons-list-header>';
+      financePostContents +=
+        obj.data[r].post_rec.post_details[s].post_description;
+      financePostContents += '</ons-list-header>';
+      financePostContents += '</ons-list-item>';
+      financeContents[n] = {
+        title: obj.data[r].post_rec.post_details[s].post_description,
+        content: obj.data[r].post_rec.post_details[s].post_url
+      };
+    }
+  }
+  servicePostContents += '</div>';
+}
+
+var schoolItem;
+var currentUrl = '';
+function getFinanceContent(n) {
+  schoolItem = n;
+  currentUrl = serviceContents[n].content;
+
+  var objData = serviceContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempfinance.html', data);
 }
