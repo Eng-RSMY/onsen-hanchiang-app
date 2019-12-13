@@ -83,8 +83,8 @@ document.addEventListener('init', function(event) {
     var newContent = '';
     newContent += schoolContents[schoolItem].content;
 
-    $('#div-schoolcontent').html(newContent);
-    //$('#div-calendarcontent img').css('width', '200%');
+    //$('#div-schoolcontent').html(newContent);
+    $('#div-schoolcontent').html('Click button to download and view pdf file:');
   }
 
   if (page.id === 'tempcoursecontent.html') {
@@ -816,8 +816,7 @@ var currentUrl = '';
 function getSchoolContent(n) {
   schoolItem = n;
   currentUrl = schoolContents[n].content;
-  //console.log('...' + currentUrl);
-  //ons.notification.toast('you clicked: ' + j, { timeout: 1000 });
+
   var objData = schoolContents[n];
 
   var content = document.getElementById('myNavigator');
