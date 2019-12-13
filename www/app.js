@@ -99,6 +99,13 @@ document.addEventListener('init', function(event) {
   if (page.id === 'tempschoolposts.html') {
     $('#div-schoolposts').html(schoolPostContents);
   }
+  if (page.id === 'tempregistryposts.html') {
+    $('#div-schoolposts').html(registryPostContents);
+  }
+  if (page.id === '7-schoolposts.html' || page.id === '8-registryposts.html') {
+    document.getElementById('username').value = userName;
+    document.getElementById('password').value = password;
+  }
 });
 
 //--------- NEWS ------------
@@ -721,16 +728,18 @@ function registerSubjects() {
   });
 }
 
+var userName = 'h1811416006@hcu.edu.my';
+var password = '980121075452';
 //-------7 School Posts -------
 function userLoginSchoolPosts() {
   schoolUserID = '';
   $('.progress-circular').css('visibility', 'visible');
-  var userName = document.getElementById('username').value;
-  var password = document.getElementById('password').value;
+  userName = document.getElementById('username').value;
+  password = document.getElementById('password').value;
 
   //--debug--
-  userName = 'h1811416006@hcu.edu.my';
-  password = '980121075452';
+  //userName = 'h1811416006@hcu.edu.my';
+  //password = '980121075452';
 
   $.ajax({
     url:
@@ -827,7 +836,122 @@ function getSchoolContent(n) {
 
 function loadPdf() {
   var url = '';
-  // console.log(currentUrl);
+  handleDocumentWithURL(
+    function() {
+      ons.notification.toast('pdf load ok', { timeout: 2000 });
+    },
+    function(error) {
+      console.log('failure');
+      ons.notification.toast('pdf failed: ' + error, { timeout: 2000 });
+    },
+    currentUrl
+  );
+}
+
+//-------8 Registry Posts -------
+function userLoginRegistryPosts() {
+  schoolUserID = '';
+  $('.progress-circular').css('visibility', 'visible');
+  userName = document.getElementById('username').value;
+  password = document.getElementById('password').value;
+
+  //--debug--
+  //userName = 'h1811416006@hcu.edu.my';
+  //password = '980121075452';
+
+  $.ajax({
+    url:
+      'http://www.hanchianguniversitycollege.com/system/hcuc-api/login.php?app_id=hanchiangapp2019&username=' +
+      userName +
+      '&password=' +
+      password,
+
+    type: 'GET',
+    success: function(res) {
+      var obj = JSON.parse(res);
+      schoolUserID = obj.data.user_id;
+      loadRegistryPostsContent(schoolUserID);
+      $('.progress-circular').css('visibility', 'hidden');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error Login: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+function loadRegistryPostsContent(schoolUserID) {
+  var regUrl =
+    'http://www.hanchianguniversitycollege.com/system/hcuc-api/student_registry_post.php?app_id=hanchiangapp2019&&user_id=' +
+    schoolUserID;
+  //kung sin yee: userID 918
+  $.ajax({
+    url: regUrl,
+    type: 'GET',
+    success: function(res) {
+      formatRegistryPostsContent(res);
+      var content = document.getElementById('myNavigator');
+      data = {
+        data: { title: 'Registry Posts' },
+        animation: 'slide'
+      };
+      content.pushPage('tempregistryposts.html', data);
+      $('.progress-circular').css('display', 'none');
+    }
+  }).fail(function(xhr, status, error) {
+    $('.progress-circular').css('visibility', 'hidden');
+    ons.notification.toast('Error: ' + error, {
+      timeout: 2000
+    });
+  });
+}
+
+var registryContents = [];
+var registryPostContents = '';
+function formatRegistryPostsContent(res) {
+  n = 0;
+  var obj = JSON.parse(res);
+  //console.log(obj.data[0].post_rec.category_name);
+
+  registryPostContents += '<div class="registry-posts">';
+  for (var r = 0; r < obj.data.length; r++) {
+    registryPostContents +=
+      '<br><b>' + obj.data[r].post_rec.category_name + '</b>' + '<br><br>';
+    for (var s = 0; s < obj.data[r].post_rec.post_details.length; s++) {
+      n++;
+      registryPostContents += '<ons-list-item modifier="chevron" tappable';
+      registryPostContents += ' onclick="getRegistryContent(';
+      registryPostContents += n;
+      registryPostContents += ')">';
+      registryPostContents += '<ons-list-header>';
+      registryPostContents +=
+        obj.data[r].post_rec.post_details[s].post_description;
+      registryPostContents += '</ons-list-header>';
+      registryPostContents += '</ons-list-item>';
+      registryContents[n] = {
+        title: obj.data[r].post_rec.post_details[s].post_description,
+        content: obj.data[r].post_rec.post_details[s].post_url
+      };
+    }
+  }
+  registryPostContents += '</div>';
+}
+
+function getRegistryContent(n) {
+  schoolItem = n;
+  currentUrl = registryContents[n].content;
+
+  var objData = registryContents[n];
+
+  var content = document.getElementById('myNavigator');
+
+  data = { data: { title: objData.title }, animation: 'slide' };
+  content.pushPage('tempregistry.html', data);
+}
+
+function loadPdf() {
+  var url = '';
   handleDocumentWithURL(
     function() {
       ons.notification.toast('pdf load ok', { timeout: 2000 });
