@@ -40,7 +40,7 @@
         <icon height="29" platform="ios" src="www/ios/icon-small.png" width="29" />
         <icon height="58" platform="ios" src="www/ios/icon-small@2x.png" width="58" />
         <icon height="87" platform="ios" src="www/ios/icon-small@3x.png" width="87" />
-        <icon height="1024" platform="ios" src="www/ios/icon1024.png" width="1024" />
+        <icon height="1024" platform="ios" src="www/ios/icon1024.jpg" width="1024" />
         
     </platform>
     <platform name="ios">
@@ -49,5 +49,5 @@
     </platform>
     <preference name="orientation" value="portrait" />
     <preference name="phonegap-version" value="cli-7.1.0" />
-    <icon src="icon1024.png" />
+    <icon src="icon1024.jpg" />
 </widget>
