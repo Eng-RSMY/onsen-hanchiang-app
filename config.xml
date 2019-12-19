@@ -48,6 +48,6 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <preference name="orientation" value="portrait" />
-
+    <preference name="phonegap-version" value="cli-7.1.0" />
     <icon src="icon1024.png" />
 </widget>
