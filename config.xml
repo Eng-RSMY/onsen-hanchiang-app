@@ -49,5 +49,5 @@
     </platform>
     <preference name="orientation" value="portrait" />
 
-    <icon src="icon144.png" />
+    <icon src="icon1024.png" />
 </widget>
